@@ -20,11 +20,11 @@ export class DomPuppet {
 
         this.el = el instanceof Element ? el : document.getElementById(el);
         this.el.__dom_puppet = this;
-        this.model = model;
-        this.derivery = new Derivery(derived, model);
-        this.modifiers = modifiers;
-        this.subscribers = subscribers;
-        this.methods = methods;
+        this.model = model || {};
+        this.derivery = new Derivery(derived || {}, model);
+        this.modifiers = modifiers || {};
+        this.subscribers = subscribers || {};
+        this.methods = methods || {};
 
         this.handleList(this.el);
         this.triggerUpdates();
@@ -79,27 +79,21 @@ export class DomPuppet {
 
         const prefix = `${keypath}.${index}.`;
 
+        const wholeMappings = ['value', 'update'];
+        wholeMappings.forEach(mapping => {
 
-        // clone.querySelectorAll('[data-remove-list-item]').forEach(el => {
-        //     el.dataset.removeListItem = `${keypath}.${index}`;
-        // });
-
-        [...clone.querySelectorAll('[data-value]')]
+            [...clone.querySelectorAll(`[data-${mapping}]`)]
             .filter(child => child.closest('[data-list]') === null)
             .forEach(child => {
-                child.dataset.value = prefix + child.dataset.value;
+                child.dataset[mapping] = prefix + child.dataset[mapping];
             });
-        clone.dataset.value && (clone.dataset.value = prefix + clone.dataset.value);
 
-        [...clone.querySelectorAll('[data-update]')]
-            .filter(child => child.closest('[data-list]') === null)
-            .forEach(child => {
-                child.dataset.update = prefix + child.dataset.update;
-            });
-        clone.dataset.update && (clone.dataset.update = prefix + clone.dataset.value);
+            clone.dataset[mapping] && 
+                (clone.dataset[mapping] = prefix + clone.dataset[mapping]);
 
+        });
 
-        //style
+        //style and attributes
 
         function prefixTags(style, prefix) {
             if (!style) {
@@ -114,24 +108,19 @@ export class DomPuppet {
             return style;
         }
 
-        [...clone.querySelectorAll('[data-style]')]
+        const tagMappings = ['style', 'attributes'];
+        tagMappings.forEach(mapping => {
+
+            [...clone.querySelectorAll(`[data-${mapping}]`)]
             .filter(child => child.closest('[data-list]') === null)
             .forEach(child => {
-                child.dataset.style = prefixTags(child.dataset.style, prefix);
+                child.dataset[mapping] = prefixTags(child.dataset[mapping], prefix);
             });
 
-        clone.dataset.style && (clone.dataset.style = prefixTags(clone.dataset.style, prefix));
+            clone.dataset[mapping] 
+               && (clone.dataset[mapping] = prefixTags(clone.dataset[mapping], prefix));
 
-
-        [...clone.querySelectorAll('[data-attributes]')]
-            .filter(child => child.closest('[data-list]') === null)
-            .forEach(child => {
-                child.dataset.attributes = prefixTags(child.dataset.attributes, prefix);
-            });
-
-        clone.dataset.attributes && (clone.dataset.attributes = prefixTags(clone.dataset.attributes, prefix));
-
-
+        });
 
         const subList = clone.querySelectorAll('[data-list]');
 

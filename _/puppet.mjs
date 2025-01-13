@@ -1,5 +1,5 @@
 import { getInputValue, updateElementValue } from './puppet-dom-helper.mjs';
-import { getByPath, setByPath, removeByPath } from './model-util.mjs';
+import { getByPath, setByPath, removeByPath, generateSetByPathCalls } from './model-util.mjs';
 
 export class DomPuppet {
     el;
@@ -49,47 +49,61 @@ export class DomPuppet {
 
     }
 
-    handleList(element, parentPrefix = '') {
+    handleListItem(element) {
 
-        element.querySelectorAll('[data-list]').forEach(listEl => {
+        const keypath = element.dataset.list;
+        const templateEl = element.children[0].cloneNode(true);
+        element.__dom_puppet_list_template = templateEl;
 
-            listEl.dataset.list = parentPrefix + listEl.dataset.list;
+        element.innerHTML = '';
 
-            const keypath = listEl.dataset.list;
-            const templateEl = listEl.children[0].cloneNode(true);
-            listEl.__dom_puppet_list_template = templateEl;
-
-            listEl.parentElement.querySelectorAll('[data-target]')
-                .forEach(el => el.dataset.target = parentPrefix + el.dataset.target);
-
-            listEl.innerHTML = '';
-
-            (this.getValue(keypath) || []).forEach((item, index) => {
-
-                this.handleNewListItem(listEl, keypath, templateEl, index);
-
-            });
-
+        (this.getValue(keypath) || []).forEach((item, index) => {
+            this.handleNewListItem(element, keypath, templateEl, index);
         });
+
+    }
+
+    handleList(element) {
+
+        let els = [];
+        if (element.dataset.list) {
+            els.push(element);
+        }
+
+        [...els, ...element.querySelectorAll('[data-list]')]
+        .forEach(this.handleListItem.bind(this));
 
     }
 
     handleNewListItem(listEl, keypath, templateEl, index) {
         const clone = templateEl.cloneNode(true);
+        clone.dataset.index = index;
 
-        const prefix = `${keypath}.${index}.`;
+        const prefix = `${keypath}.${index}`;
 
-        const wholeMappings = ['value', 'update'];
+        const wholeMappings = ['value', 'update', 'list', 'target'];
         wholeMappings.forEach(mapping => {
 
             [...clone.querySelectorAll(`[data-${mapping}]`)]
-            .filter(child => child.closest('[data-list]') === null)
+            .filter(child => (
+                child.dataset.list ||
+                child.closest('[data-list]') === null
+                ))
             .forEach(child => {
-                child.dataset[mapping] = prefix + child.dataset[mapping];
+                if (child.dataset[mapping] === 'this') {
+                    child.dataset[mapping] = prefix;
+                } else {
+                    child.dataset[mapping] = prefix + '.' + child.dataset[mapping];
+                }
             });
 
-            clone.dataset[mapping] && 
-                (clone.dataset[mapping] = prefix + clone.dataset[mapping]);
+            if (clone.dataset[mapping]) {
+                if (clone.dataset[mapping] === 'this') {
+                    clone.dataset[mapping] = prefix;
+                } else {
+                    clone.dataset[mapping] = prefix + '.' + clone.dataset[mapping];
+                }
+            }
 
         });
 
@@ -103,7 +117,11 @@ export class DomPuppet {
             [...style.matchAll(/(\{([\w.\|]*)\})/gsi)]
                 .map(m => m[2])
                 .forEach(tag => {
-                    style = style.replaceAll(`\{${tag}\}`, `{${prefix}${tag}}`);
+                    if (tag === 'this') {
+                        style = style.replaceAll(`\{${tag}\}`, `{${prefix}}`);
+                    } else {
+                        style = style.replaceAll(`\{${tag}\}`, `{${prefix}.${tag}}`);
+                    }
                 });
             return style;
         }
@@ -122,10 +140,10 @@ export class DomPuppet {
 
         });
 
-        const subList = clone.querySelectorAll('[data-list]');
+        const subList = clone.querySelector('[data-list]');
 
-        if (subList) {
-            this.handleList(clone, prefix)
+        if (subList || clone.dataset.list) {
+            this.handleList(clone, prefix);
         }
 
         listEl.appendChild(clone);
@@ -256,8 +274,31 @@ export class DomPuppet {
 
         //puppet
         this.triggerUpdates(undefined, newEl);
-        this.registerCustomElementEvents(newEl);
+        this.registerElementEvents(newEl);
 
+    }
+
+    //internal
+    replaceList(listKeyPath, newList) {
+        const listEl = document.querySelector(`[data-list="${listKeyPath}"]`);
+
+        if (!listEl) {
+            return;
+        }
+        
+        const templateEl = listEl.__dom_puppet_list_template;
+        
+        listEl.innerHTML = '';
+
+        newList.forEach((item, idx) => {
+
+            const newEl = this.handleNewListItem(listEl, listKeyPath, templateEl, idx);
+            //puppet
+            this.triggerUpdates(undefined, newEl);
+            this.registerElementEvents(newEl);
+
+        })
+        
     }
 
     //returns keypath of an element within a list ([data-list])
@@ -301,25 +342,31 @@ export class DomPuppet {
     }
 
     getValue(keypath) {
+
         if (this.derivery.hasDeriver(keypath)) {
             return this.derivery.derive(keypath);
+        } 
+        
+        
+        const [key, ...modifiers] = keypath.split('|');
+
+        let value;
+        if (key.endsWith('.index')) {
+            const parts = key.split('.');
+            value = parts[parts.length - 2];
         } else {
-            if (keypath.indexOf('|') > -1) {
-                const [key, ...modifiers] = keypath.split('|');
-                let value = getByPath(this.model, key);
-
-                modifiers.forEach(modifierKey => {
-                    if (!this.modifiers[modifierKey]) {
-                        console.warn(`Modifier [${modifierKey}] not found for value [${keypath}]`)
-                    } else {
-                        value = this.modifiers[modifierKey].bind(this)(value);
-                    }
-                })
-
-                return value;
-            }
-            return getByPath(this.model, keypath)
+            value = getByPath(this.model, key);
         }
+
+        modifiers.forEach(modifierKey => {
+            if (!this.modifiers[modifierKey]) {
+                console.warn(`Modifier [${modifierKey}] not found for value [${keypath}]`)
+            } else {
+                value = this.modifiers[modifierKey].bind(this)(value);
+            }
+        })
+
+        return value;
     }
 
     setValue(keypath, nv) {
@@ -329,8 +376,20 @@ export class DomPuppet {
         }
 
         const ov = getByPath(this.model, keypath);
+
         setByPath(this.model, keypath, nv);
         this.notifyForUpdate(keypath, ov, nv);
+
+        if (Array.isArray(nv)) {
+            this.replaceList(keypath, nv);
+        }
+    }
+
+    setValues(json, basePath = '') {
+        const values = generateSetByPathCalls(json, basePath);
+        values.forEach(value => {
+            this.setValue(value.path, value.value);
+        });
     }
 
     registerEventHandlers() {
@@ -358,28 +417,31 @@ export class DomPuppet {
             e.stopPropagation();
         });
 
-        this.el.addEventListener('input', (e) => {
-            if (e.target.dataset.update) {
-                const k = e.target.dataset.update;
-                const nv = getInputValue(e);
-                this.setValue(k, nv);
-                e.stopPropagation();
-            }
-        }, {});
-
-        this.registerCustomElementEvents(this.el);
+        this.registerElementEvents(this.el);
 
     }
 
-    registerCustomElementEvents(targetEl) {
+    registerElementEvents(targetEl) {
+
+        [...targetEl.parentElement.querySelectorAll('[data-update]')]
+        .filter(element => !element.__dom_puppet_data_update_registered)
+        .forEach(element => {
+                element.addEventListener('input', e => {
+                    const k = e.target.dataset.update;
+                    const nv = getInputValue(e);
+                    this.setValue(k, nv);
+                });
+                element.__dom_puppet_data_update_registered = true;
+        });
+
         [...targetEl.parentElement.querySelectorAll('[data-on]')]
-            .filter(element => !element.__dom_puppet_data_on)
+            .filter(element => !element.__dom_puppet_data_on_registered)
             .forEach(element => {
                 const [event, method] = element.dataset.on.split(':');
                 element.addEventListener(event, (e) => {
                     this.methods[method].bind(this)(e);
                 });
-                element.__dom_puppet_data_on = true;
+                element.__dom_puppet_data_on_registered = true;
             });
     }
 

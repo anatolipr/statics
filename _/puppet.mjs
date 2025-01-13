@@ -34,6 +34,7 @@ export class DomPuppet {
     triggerUpdates(eventKey, targetEl) {
         this.replaceValues(eventKey, targetEl || this.el);
         this.replaceStyles(eventKey, targetEl || this.el);
+        this.replaceClasses(eventKey, targetEl || this.el);
         this.replaceAttributes(eventKey, targetEl || this.el);
     }
 
@@ -126,7 +127,7 @@ export class DomPuppet {
             return style;
         }
 
-        const tagMappings = ['style', 'attributes'];
+        const tagMappings = ['style', 'attributes', 'class'];
         tagMappings.forEach(mapping => {
 
             [...clone.querySelectorAll(`[data-${mapping}]`)]
@@ -337,6 +338,32 @@ export class DomPuppet {
                     style = style.replaceAll(`\{${tag}\}`, value);
                 });
             el.style.cssText = `${el.__original_style__} ${style}`;
+        });
+
+    }
+
+
+    replaceClasses(eventKey, targetEl) {
+
+        const selector = eventKey ?
+            `[data-class*="{${eventKey}}"],[data-class*="{${eventKey}|"]` : '[data-class]';
+
+        targetEl.querySelectorAll(selector).forEach(el => {
+
+            el.dataset.class.split(',')
+            .map(pair => pair.split(':'))
+            .forEach(pair => {
+                let cls = pair[0].trim();
+                let tag = pair[1].trim().replace('{', '').replace('}', '');
+                const value = this.getValue(tag);
+
+                if (value) {
+                    el.classList.add(cls);
+                } else {
+                    el.classList.remove(cls);
+                }
+
+            });
         });
 
     }

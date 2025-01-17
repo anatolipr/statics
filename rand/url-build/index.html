@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: sans-serif;
+            font-weight: 200;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <section class="form">
+
+            <div class="fields">
+                Version
+                <input placeholder="version {tag} eg. 'v2'" data-value="version" data-update="version">
+            </div>
+
+            <div class="fields">
+                File path
+                <input placeholder="eg. _/my.test" data-value="path" data-update="path">
+            </div>
+
+            <pre class="result" data-value="result"></pre>
+
+        </section>
+
+    </div>
+
+    <style>
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fields {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .result {
+            background-color: #2b2b2b;
+            border: 1px dashed #6b6b6b;
+            padding: 10px;
+            font-size: 13px;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <script type="module" src="script.mjs"></script>
+</body>
+
+</html>

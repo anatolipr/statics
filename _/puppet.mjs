@@ -305,6 +305,9 @@ export class DomPuppet {
     //returns keypath of an element within a list ([data-list])
     getListKeyPath(el) {
         const listEl = el.closest('[data-list]');
+        if (!listEl) {
+            return undefined;
+        }
         const listChildren = [...listEl.children];
         const rowEl = listChildren.find(child => child.contains(el));
         const index = listChildren.indexOf(rowEl);
@@ -466,7 +469,7 @@ export class DomPuppet {
             .forEach(element => {
                 const [event, method] = element.dataset.on.split(':');
                 element.addEventListener(event, (e) => {
-                    this.methods[method].bind(this)(e);
+                    this.methods[method].bind(this)(e, this.getListKeyPath(e.target));
                 });
                 element.__dom_puppet_data_on_registered = true;
             });

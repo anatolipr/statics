@@ -3,5 +3,3 @@
   Access-Control-Allow-Methods: GET, POST, OPTIONS
   Access-Control-Allow-Headers: Content-Type, Authorization
   X-Robots-Tag: nosnippet
-/*.html
-  Content-Type: text/html

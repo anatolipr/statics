@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="https://ui.impact.com/theme-tokens/1.3.1/index.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://ui.impact.com/theme-tokens/1.3.1/v2.css?parse" crossorigin="anonymous">
 
-
+    <style>
+        #results {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <!-- element used to derive computed css variable values -->
     <div id="test" style="
         background-color: var(--iui3-color-background-background-default);
         color: var(--iui3-color-text-text-default);
@@ -113,12 +118,12 @@
             }
 
             document.getElementById("results").innerHTML = `
-                <h3>Closest CSS Variables for <span style="color:${inputHex}">${inputHex}</span></h3>
+                <h3>Closest CSS Variables for <span style="color:${inputHex}">${inputHex}</span> (${matches.length})</h3>
                 <ul style="list-style: none; padding: 0;">
                     ${matches.map(match => `
                         <li style="display: flex; align-items: center; margin-bottom: 10px;">
                             <div style="width: 30px; height: 30px; background: ${match.hex}; border: 1px solid #ccc; margin-right: 10px;"></div>
-                            <span><b>${match.variable}</b> (${match.hex}) - <b>${match.matchPercent}% match</b></span>
+                            <span>${match.variable} (${match.hex}) <b>${match.matchPercent ? match.matchPercent + '%' : ''}</b></span>
                         </li>
                     `).join("")}
                 </ul>

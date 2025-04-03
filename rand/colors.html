@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html style="color-scheme: light dark">
+
+<body class="vnext-light">
+
+<link rel="stylesheet" href="https://ui.impact.com/theme-tokens/1.3.1/index.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://ui.impact.com/theme-tokens/1.3.1/v2.css?parse" crossorigin="anonymous">
+
+
+<div id="test" style="
+        background-color: var(--iui3-color-background-background-default);
+        color: var(--iui3-color-text-text-default);
+        ">
+        Themed element
+</div>
+
+<!-- 
+    getComputedStyle(document.getElementById('test')).getPropertyValue('--iui3-color-text-text-subdued');
+    getComputedStyle(document.documentElement).getPropertyValue('--iui3-color-text-text-default');
+    getComputedStyle(document.documentElement).getPropertyValue('--iui3-color-background-background-default'); 
+-->
+
+
+<script type="module">
+import chroma from "https://cdn.jsdelivr.net/npm/chroma-js/+esm";
+
+function getAllCSSVariableNames(styleSheets = document.styleSheets){
+   var cssVars = [];
+   // loop each stylesheet
+   for(var i = 0; i < styleSheets.length; i++){
+      // loop stylesheet's cssRules
+      try{ // try/catch used because 'hasOwnProperty' doesn't work
+         for( var j = 0; j < styleSheets[i].cssRules.length; j++){
+            try{
+               // loop stylesheet's cssRules' style (property names)
+               for(var k = 0; k < styleSheets[i].cssRules[j].style.length; k++){
+                  let name = styleSheets[i].cssRules[j].style[k];
+                  // test name for css variable signiture and uniqueness
+                  if(name.startsWith('--') && cssVars.indexOf(name) == -1){
+                     cssVars.push(name);
+                  }
+               }
+            } catch (error) {}
+         }
+      } catch (error) {}
+   }
+   return cssVars;
+}
+const sheets = [... document.styleSheets].filter(sheet => sheet?.href?.indexOf('?parse') > -1);
+let vars = getAllCSSVariableNames(sheets);
+let colorList = [];
+const styledEl = document.getElementById('test');
+vars.forEach(v => {
+    if (v.indexOf('color') > -1) {
+        colorList.push({
+            k: v, v: getComputedStyle(styledEl).getPropertyValue(v)
+        })
+    }
+});
+
+console.log(colorList);
+
+// Convert colors to chroma objects
+const colorEntries = colorList.map(({ k, v }) => ({
+    variable: k,
+    hex: v.substring(0, 7), // Remove alpha if present
+    chromaColor: chroma(v),
+}));
+
+// Function to find all close matches within a threshold
+function getMatchingCssVariables(inputHex, threshold = 25) {
+
+    if (inputHex.startsWith('--')) {
+        
+        const search = inputHex.substring(2);
+        const result = colorEntries.filter(entry => entry.variable.indexOf(search) > -1);
+        return result;
+    }
+
+    const inputColor = chroma(inputHex);
+    return colorEntries
+        .map(({ hex, variable, chromaColor }) => ({
+            variable,
+            hex,
+            distance: chroma.distance(inputColor, chromaColor, "rgb")
+        }))
+        .filter(({ distance }) => distance <= threshold) // Keep close matches
+        .sort((a, b) => a.distance - b.distance); // Sort by closest first
+}
+
+// Example usage
+const inputColor = "#fff"; // Example input color
+        console.log(getMatchingCssVariables(inputColor));
+
+// UI
+
+// Function to generate HTML for the results
+function displayResults(inputHex) {
+            let matches;
+            try {
+                matches = getMatchingCssVariables(inputHex);
+            } catch (e) {
+                document.getElementById("results").innerHTML = `<p style="color: red;">Invalid color input</p>`;
+                return;
+            }
+
+            if (matches.length === 0) {
+                document.getElementById("results").innerHTML = `<p>No close matches found.</p>`;
+                return;
+            }
+
+            document.getElementById("results").innerHTML = `
+                <h3>Closest CSS Variables for <span style="color:${inputHex}">${inputHex}</span></h3>
+                <ul style="list-style: none; padding: 0;">
+                    ${matches.map(match => `
+                        <li style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div style="width: 30px; height: 30px; background: ${match.hex}; border: 1px solid #ccc; margin-right: 10px;"></div>
+                            <span><b>${match.variable}</b> (${match.hex})</span>
+                        </li>
+                    `).join("")}
+                </ul>
+            `;
+        }
+
+        // Event listener for user input
+        window.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("colorInput").addEventListener("input", (event) => {
+                displayResults(event.target.value);
+            });
+        });
+
+</script>
+
+<input id="colorInput" placeholder="Color eg. #fff or --{variable term}">
+
+<div id="results"></div>
+
+</body>
+
+</html>

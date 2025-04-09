@@ -1,0 +1,98 @@
+<html style="color-scheme: light dark;">
+    <head>
+        <title>Food roulette</title>
+    </head>
+    
+    <body>
+
+        <div class="main">
+            <h1 id="result">Click the button to see a result</h1>
+            <button id="button">Choose random value</button>
+            <a id="listLink" target="_blank">See the list</a>
+        </div>
+
+        <script type="module">
+
+
+
+            const gistUrl = `https://gist.githubusercontent.com/anatolipr/9418791467fa55f8b66931233ae4b834/raw/9f3e0b74866543dc117e2a334f3c09dbba1cbdb0/gistfile1.txt`;
+            const items = (await fetch(gistUrl).then(r => r.text())).split('\n');
+        
+            
+            const listLinkEl = document.querySelector('#listLink');
+            const resultEl = document.querySelector('#result');
+            const buttonEl = document.querySelector('#button');
+
+            listLinkEl.setAttribute('href', gistUrl);
+            
+          
+            const TOTAL_COUNT = 6;
+
+            class Randomer {
+                running = false;
+                count = TOTAL_COUNT;
+
+                randomItem() {
+                    let index = Math.floor(items.length * Math.random());
+                    resultEl.innerHTML = items[index];
+                }
+
+                run() {
+                    if (this.running) {
+                        return;
+                    }
+
+                    this.running = true;
+                    this.randomItem();
+                    this.interval = setInterval(() => {
+
+                        if (this.count === 0) {
+                            clearInterval(this.interval);
+                            this.count = TOTAL_COUNT;
+                            this.running = false;
+                            return;
+                        }
+
+                        this.randomItem();
+
+                        this.count --;
+                    }, 200);
+
+                }
+            }
+
+            const randomer = new Randomer();
+            
+            buttonEl.addEventListener('click', () => { randomer.run() });
+            
+            console.log('items',items);
+        </script>
+
+        <style>
+            .main {
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                flex-direction: column;
+                gap: 10px;
+
+                #result {
+                    margin: 0;
+                }
+
+                #button {
+                    background-color: chocolate;
+                    font-family: inherit;
+                    border-radius: 20px;
+                    margin: 0;
+                    padding: 10px 20px;
+                    color: white;
+                    border: none;
+                    font-size: 19px;
+                }
+            }
+        </style>
+    </body>
+    
+</html>

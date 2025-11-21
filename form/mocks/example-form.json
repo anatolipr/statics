@@ -1,0 +1,95 @@
+{
+    "id": "formData",
+    "sections": [
+        {
+            "id": "s1",
+            "description": "",
+            "title": "New section",
+            "multi": false,
+            "key": "",
+            "fields": [
+                {
+                    "label": "Foo",
+                    "description": "",
+                    "type": "text",
+                    "placeholder": "",
+                    "fieldName": "foo",
+                    "required": false,
+                    "value": "",
+                    "validation": ""
+                }
+            ]
+        },
+        {
+            "id": "s0",
+            "description": "section description",
+            "title": "Personal info",
+            "multi": true,
+            "key": "",
+            "fields": [
+                {
+                    "label": "First name",
+                    "description": "Your given name at birth",
+                    "type": "text",
+                    "placeholder": "eg. John",
+                    "fieldName": "first_name",
+                    "required": true,
+                    "value": "noname",
+                    "validation": "/a-z/"
+                },
+                {
+                    "label": "Hobbies",
+                    "description": "",
+                    "type": "radios",
+                    "placeholder": "",
+                    "fieldName": "hobbies",
+                    "required": false,
+                    "value": "no",
+                    "validation": "",
+                    "options": [
+                        {
+                            "label": "yes",
+                            "value": "yes"
+                        },
+                        {
+                            "label": "no",
+                            "value": "no"
+                        }
+                    ]
+                },
+                {
+                    "label": "Hobby list",
+                    "description": "comma separated list of hobbies",
+                    "type": "text",
+                    "placeholder": "eg. fishing, hiking",
+                    "fieldName": "hobbies_list",
+                    "required": false,
+                    "value": "",
+                    "validation": "",
+                    "condition": {
+                        "fieldName": "hobbies",
+                        "requiredValue": "yes"
+                    }
+                }
+            ],
+            "condition": {
+                "fieldName": "foo",
+                "requiredValue": "!bar"
+            }
+        }
+    ],
+    "buttons": [
+        {
+            "type": "submit",
+            "label": "Submit",
+            "enabled": true,
+            "value": "submit"
+        },
+        {
+            "label": "Cancel",
+            "value": "cancel"
+        }
+    ],
+    "description": "Page desc",
+    "title": "Main page"
+}

@@ -1,0 +1,14 @@
+{
+    "foo": "not-bar",
+    "personal_info": [
+        {
+            "first_name": "john",
+            "hobbies": "yes",
+            "hobbies_list": "hiking"
+        },
+        {
+            "first_name": "marco",
+            "hobbies": "no"
+        }
+    ]
+}

@@ -91,11 +91,9 @@ export class CondtionModel extends EventEmitter {
         }
     }
 
-    static fromJson(json) {
-        const condition = new CondtionModel();
-        condition.fieldName - json.requiredValue;
-        condition.requiredValue = json.requiredValue;
-        return condition;
+    fromJson(json) {
+        this.fieldName = json.requiredValue;
+        this.requiredValue = json.requiredValue;
     }
 }
 
@@ -210,7 +208,14 @@ export class SectionModel extends EventEmitter {
         this.description = json.description;
         this.multi = json.multi;
         this.key = json.key;
-        this.condition = 
+        const condition = new CondtionModel();
+        condition.fromJson(json.condition);
+        this.condition = condition;
+        this.fields = json.fields.map(field => {
+          const fieldModel = new FieldModel();
+          fieldModel.fromJson(field);
+          return field;
+        });
     }
 
 }

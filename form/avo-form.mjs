@@ -13,7 +13,7 @@ customElements.define('avo-form-test', class extends HTMLElement {
             fieldName
             <input data-id="fieldName"><br>
             expectedValue
-            <input data-id="expectedValue">
+            <input data-id="requiredValue">
         `;
 
         defineElementsWithDataId(this);
@@ -22,12 +22,12 @@ customElements.define('avo-form-test', class extends HTMLElement {
             this.fieldNameEl.value = e.detail;
         });
 
-        this.model.addEventListener('expectedValueSet', (e) => {
-            this.expectedValueEl.value = e.detail;
+        this.model.addEventListener('requiredValueSet', (e) => {
+            this.requiredValueEl.value = e.detail;
         });
 
         this.fieldNameEl.addEventListener('input', e => this.model.fieldName = e.target.value);
-        this.expectedValueEl.addEventListener('input', e => this.model.expectedValue = e.target.value);
+        this.requiredValueEl.addEventListener('input', e => this.model.requiredValue = e.target.value);
         
     }
 })

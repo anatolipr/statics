@@ -4,7 +4,6 @@ export class EventEmitter extends EventTarget {
     }
 }
 
-
 function observe(obj) {
     return new Proxy(obj, {
         get(target, prop, receiver) {
@@ -15,15 +14,20 @@ function observe(obj) {
             }
             return value;
         },
-        set(target, prop, value) {
-            target[prop] = value;
+        // 1. Add 'receiver' as the 4th argument
+        set(target, prop, value, receiver) {
+            // 2. Use Reflect.set instead of target[prop] = value
+            const success = Reflect.set(target, prop, value, receiver);
             
-            console.log(`${prop}Set`)
-            target.dispatchEvent(new CustomEvent(`${prop}Set`, {
-                detail: value
-            }));
+            if (success) {
+                console.log(`${prop}Set`);
+                // Dispatch event on the target (the EventTarget instance)
+                target.dispatchEvent(new CustomEvent(`${prop}Set`, {
+                    detail: value
+                }));
+            }
             
-            return true;
+            return success;
         }
     });
 }

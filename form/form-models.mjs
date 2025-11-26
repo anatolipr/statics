@@ -1,4 +1,4 @@
-import { EventEmitter } from "../rand/util.mjs";
+import { BaseModel, EventEmitter } from "../rand/util.mjs";
 
 export const ButtonType = Object.freeze({
     SUBMIT: 'SUBMIT',
@@ -62,34 +62,9 @@ export const TYPE_OPTIONS = [
     },
 ];
 
-export class CondtionModel extends EventEmitter {
-    #fieldName;
-    #requiredValue;
-
-    get () {
-      return this.#fieldName;
-    }
-    
-    set fieldName(fieldName) {
-      this.#fieldName = fieldName;
-      this.emit('fieldNameSet', fieldName);
-    }
-
-    get () {
-      return this.#requiredValue;
-    }
-    
-    set requiredValue(requiredValue) {
-      this.#requiredValue = requiredValue;
-      this.emit('requiredValueSet', requiredValue);
-    }
-
-    toJson() {
-        return {
-            fieldName: this.fieldName,
-            requiredValue: this.requiredValue
-        }
-    }
+export class CondtionModel extends BaseModel {
+    fieldName;
+    requiredValue;
 
     fromJson(json) {
         this.fieldName = json.requiredValue;

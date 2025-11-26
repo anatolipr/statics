@@ -16,11 +16,17 @@ function observe(obj) {
         },
         // 1. Add 'receiver' as the 4th argument
         set(target, prop, value, receiver) {
+
+            if (target[prop] === value) {
+                // If the values are identical, do nothing (don't set, don't emit)
+                // and return true to indicate the "set" operation was successful
+                return true;
+            }
+
             // 2. Use Reflect.set instead of target[prop] = value
             const success = Reflect.set(target, prop, value, receiver);
             
             if (success) {
-                console.log(`${prop}Set`);
                 // Dispatch event on the target (the EventTarget instance)
                 target.dispatchEvent(new CustomEvent(`${prop}Set`, {
                     detail: value
@@ -37,4 +43,10 @@ export class BaseModel extends EventTarget {
         super();
         return observe(this);
     }
-} 
+}
+
+export const defineElementsWithDataId = (container) => {
+    container.querySelectorAll('[data-id]').forEach(el => {
+        container[`${el.dataset.id}El`] = el;
+    });
+}

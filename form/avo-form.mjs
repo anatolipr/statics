@@ -1,4 +1,4 @@
-import { defineElementsWithDataId } from "../rand/util.mjs";
+import { bindModelToInputs, defineElementsWithDataId } from "../rand/util.mjs";
 import { CondtionModel } from "./form-models.mjs";
 
 customElements.define('avo-form-test', class extends HTMLElement {
@@ -17,17 +17,10 @@ customElements.define('avo-form-test', class extends HTMLElement {
         `;
 
         defineElementsWithDataId(this);
-
-        this.model.addEventListener('fieldNameSet', (e) => {
-            this.fieldNameEl.value = e.detail;
+        bindModelToInputs(this, this.model, {
+            fieldName: "fieldNameEl",
+            requiredValue: "requiredValueEl"
         });
-
-        this.model.addEventListener('requiredValueSet', (e) => {
-            this.requiredValueEl.value = e.detail;
-        });
-
-        this.fieldNameEl.addEventListener('input', e => this.model.fieldName = e.target.value);
-        this.requiredValueEl.addEventListener('input', e => this.model.requiredValue = e.target.value);
         
     }
 })

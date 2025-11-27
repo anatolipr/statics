@@ -50,3 +50,19 @@ export const defineElementsWithDataId = (container) => {
         container[`${el.dataset.id}El`] = el;
     });
 }
+
+export function bindModelToInputs(component, model, map) {
+    // Ensure component already ran defineElementsWithDataId()
+    for (const [prop, elName] of Object.entries(map)) {
+        const el = component[elName];
+        if (!el) continue;
+
+        // 1. Model → View
+        model.addEventListener(`${prop}Set`, e => el.value = e.detail);
+
+        // 2. View → Model
+        el.addEventListener('input', e => {
+            model[prop] = e.target.value;
+        });
+    }
+}

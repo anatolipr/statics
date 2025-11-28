@@ -52,7 +52,16 @@ export const defineElementsWithDataId = (container) => {
 }
 
 export function bindModelToInputs(component, model, map) {
-    // Ensure component already ran defineElementsWithDataId()
+    
+    defineElementsWithDataId(component);
+
+    if (!map) {
+        map = {};
+        container.querySelectorAll('[data-id]').forEach(el => {
+            map[el.dataset.id] = el.dataset.id;
+        });
+    }
+
     for (const [prop, elName] of Object.entries(map)) {
         const el = component[elName];
         if (!el) continue;
@@ -79,6 +88,6 @@ export function bindModelToInputs(component, model, map) {
 
 export function split(str = '', trim = true) {
     return (str || '')
-    .split(',')
-    .map(ph => trim ? ph.trim() : ph);
+        .split(',')
+        .map(ph => trim ? ph.trim() : ph);
 }

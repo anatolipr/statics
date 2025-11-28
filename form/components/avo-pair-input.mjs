@@ -40,8 +40,6 @@ customElements.define('avo-pair-input', class extends HTMLElement {
                 placeholder="${this.placeholders[1] || ''}" />
         </div>
         `;
-
-        defineElementsWithDataId(this);
         
     }
 })

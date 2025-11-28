@@ -15,13 +15,23 @@ customElements.define('avo-form-editor', class extends HTMLElement {
 
     connectedCallback() {
         this.shadowRoot.innerHTML = `
+            
             <avo-pair-input
              fields="fieldName, requiredValue"
              placeholders="field name, required value"
             ></avo-pair-input>
+
+            <pre id="log">cc</pre>
         `;
+
         this.shadowRoot.adoptedStyleSheets = [ stylesheet ];
-        this.shadowRoot.querySelector('avo-pair-input').model = new CondtionModel(); 
+        const pairInput = this.shadowRoot.querySelector('avo-pair-input');
+        pairInput.model = new CondtionModel(); 
+
+        pairInput.addEventListener('input', e => {
+            this.shadowRoot.getElementById("log").innerHTML = 
+                JSON.stringify(pairInput.model, null, ' ');
+        });
     }
 
 });

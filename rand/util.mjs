@@ -69,12 +69,14 @@ export function bindModelToInputs(component, model, map) {
         // 1. Model → View
         model.addEventListener(`${prop}Set`, e => {
             el.value = e.detail;
-            el.dispatchEvent(new CustomEvent('input', {
+
+            component.dispatchEvent(new CustomEvent('input', {
                 detail: {
                     prop,
                     target: el,
                     value: e.detail
-                }
+                },
+                bubbles: true
             }));
         });
 

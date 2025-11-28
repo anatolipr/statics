@@ -1,21 +1,24 @@
-import { bindModelToInputs, defineElementsWithDataId } from "../../rand/util.mjs";
+import { bindModelToInputs, defineElementsWithDataId, split } from "../../rand/util.mjs";
 
 customElements.define('avo-pair-input', class extends HTMLElement {
     constructor() {
         super();
-        this.placeholders = (this.getAttribute('placeholders') || '')
-        .split(',')
-        .map(ph => ph.trim());
-
-        this.fields = (this.getAttribute('fields') || '')
-        .split(',')
-        .map(ph => ph.trim());
+        this.placeholders = split(this.getAttribute('placeholders'));
+        this.fields = split(this.getAttribute('fields'))
     }
 
     #model;
 
     set model(model) {
-        this.#model = model;
+        if (this.#model) {
+            Object.assign(this.#model, model);
+        } else {
+            this.#model = model;
+            const mapping = {};
+            mapping[this.fields[0]] = 'keyEl';
+            mapping[this.fields[1]] = 'valueEl';
+            bindModelToInputs(this, this.#model, mapping);
+        }
     }
 
     get model() {
@@ -39,12 +42,6 @@ customElements.define('avo-pair-input', class extends HTMLElement {
         `;
 
         defineElementsWithDataId(this);
-        const mapping = {};
-        mapping[this.fields[0]] = 'keyEl';
-        mapping[this.fields[1]] = 'valueEl';
-        queueMicrotask(() => {
-            bindModelToInputs(this, this.#model, mapping);
-        })
         
     }
 })

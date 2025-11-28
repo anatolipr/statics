@@ -58,7 +58,16 @@ export function bindModelToInputs(component, model, map) {
         if (!el) continue;
 
         // 1. Model → View
-        model.addEventListener(`${prop}Set`, e => el.value = e.detail);
+        model.addEventListener(`${prop}Set`, e => {
+            el.value = e.detail;
+            el.dispatchEvent(new CustomEvent('input', {
+                detail: {
+                    prop,
+                    target: el,
+                    value: e.detail
+                }
+            }));
+        });
 
         // 2. View → Model
         el.addEventListener('input', e => {
@@ -66,4 +75,10 @@ export function bindModelToInputs(component, model, map) {
             e.stopPropagation();
         });
     }
+}
+
+export function split(str = '', trim = true) {
+    return (str || '')
+    .split(',')
+    .map(ph => trim ? ph.trim() : ph);
 }

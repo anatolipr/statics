@@ -21,7 +21,7 @@ customElements.define('avo-form-editor', class extends HTMLElement {
             ></avo-pair-input>
         `;
         this.shadowRoot.adoptedStyleSheets = [ stylesheet ];
-        this.shadowRoot.querySelector('avo-form-condition').model = new CondtionModel(); 
+        this.shadowRoot.querySelector('avo-pair-input').model = new CondtionModel(); 
     }
 
 });

@@ -63,6 +63,7 @@ export function bindModelToInputs(component, model, map) {
         // 2. View → Model
         el.addEventListener('input', e => {
             model[prop] = e.target.value;
+            e.stopPropagation();
         });
     }
 }

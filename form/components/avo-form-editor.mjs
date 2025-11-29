@@ -8,7 +8,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 customElements.define('avo-form-editor', class extends HTMLElement {
-    constructor() {
+    constructor() { 
         super();
         this.attachShadow({'mode': 'open'});
     }
@@ -22,6 +22,7 @@ customElements.define('avo-form-editor', class extends HTMLElement {
             ></avo-pair-input>
 
             <pre id="log">cc</pre>
+            <button type="button">Set sample data</button>
         `;
 
         this.shadowRoot.adoptedStyleSheets = [ stylesheet ];
@@ -32,6 +33,13 @@ customElements.define('avo-form-editor', class extends HTMLElement {
             this.shadowRoot.getElementById("log").innerHTML = 
                 JSON.stringify(pairInput.model, null, ' ');
         });
+
+        this.shadowRoot.querySelector('button')
+        .addEventListener('click', () => {
+            Object.assign(pairInput.model, {
+                fieldName: 'foo', requiredValue: 'bar' 
+            })
+        })
     }
 
 });

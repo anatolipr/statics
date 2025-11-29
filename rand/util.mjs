@@ -1,8 +1,8 @@
-export class EventEmitter extends EventTarget {
-    emit(eventName, detail) {
-        this.dispatchEvent(new CustomEvent(eventName, { detail }))
-    }
-}
+// export class EventEmitter extends EventTarget {
+//     emit(eventName, detail) {
+//         this.dispatchEvent(new CustomEvent(eventName, { detail }))
+//     }
+// }
 
 function observe(obj) {
     return new Proxy(obj, {
@@ -27,6 +27,7 @@ function observe(obj) {
             const success = Reflect.set(target, prop, value, receiver);
             
             if (success) {
+                //console.log(`${prop}Set`, value)
                 // Dispatch event on the target (the EventTarget instance)
                 target.dispatchEvent(new CustomEvent(`${prop}Set`, {
                     detail: value

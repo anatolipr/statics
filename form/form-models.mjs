@@ -1,4 +1,4 @@
-import { BaseModel, EventEmitter } from "../rand/util.mjs";
+import { BaseModel } from "../rand/util.mjs";
 
 export const ButtonType = Object.freeze({
     SUBMIT: 'SUBMIT',
@@ -72,7 +72,7 @@ export class CondtionModel extends BaseModel {
     }
 }
 
-export class FieldModel extends EventEmitter {
+export class FieldModel extends BaseModel {
     #label;
     #description;
     #type;
@@ -93,7 +93,7 @@ export class FieldModel extends EventEmitter {
 
 
 
-export class SectionModel extends EventEmitter {
+export class SectionModel extends BaseModel {
     #id;
     #title;
     #description;
@@ -195,7 +195,7 @@ export class SectionModel extends EventEmitter {
 
 }
 
-export class ButtonModel extends EventEmitter {
+export class ButtonModel extends BaseModel {
     #label;
     #value;
     #type;
@@ -254,7 +254,7 @@ export class ButtonModel extends EventEmitter {
     }
 }
 
-export class FormModel extends EventEmitter {
+export class FormModel extends BaseModel {
     #id;
     #title;
     #description;

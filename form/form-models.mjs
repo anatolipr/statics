@@ -66,9 +66,11 @@ export class CondtionModel extends BaseModel {
     fieldName;
     requiredValue;
 
-    fromJson(json) {
-        this.fieldName = json.requiredValue;
-        this.requiredValue = json.requiredValue;
+    static fromJson(json) {
+        const condition = new CondtionModel();
+        condition.fieldName = json.requiredValue;
+        condition.requiredValue = json.requiredValue;
+        return condition;
     }
 }
 
@@ -88,6 +90,22 @@ export class FieldModel extends BaseModel {
     customElementName;
 
     section;
+
+    static fromJson(json) {
+      const fieldModel = new FieldModel();
+      fieldModel.label = json.label;
+      fieldModel.description = json.description;
+      fieldModel.type = json.type;
+      fieldModel.placeholder = json.placeholder;
+      fieldModel.fieldName = json.fieldName;
+      fieldModel.required = json.required;
+      fieldModel.value = json.value;
+      fieldModel.validation = json.validation;
+      fieldModel.condition = CondtionModel.fromJson(json.condition);
+      fieldModel.customElementName = json.customElementName;
+      fieldModel.section = SectionModel.fromJson(json.section);
+      return fieldModel;
+    }
 }
 
 export class SectionModel extends BaseModel {
@@ -99,19 +117,16 @@ export class SectionModel extends BaseModel {
     condition;
     fields = [];
 
-    fromJson(json) {
-        this.id = json.id;
-        this.title = json.title;
-        this.description = json.description;
-        this.multi = json.multi;
-        this.key = json.key;
-        const condition = new CondtionModel();
-        condition.fromJson(json.condition);
-        this.condition = condition;
+    static fromJson(json) {
+        const section = new SectionModel(); 
+        section.id = json.id;
+        section.title = json.title;
+        section.description = json.description;
+        section.multi = json.multi;
+        section.key = json.key;
+        section.condition = CondtionModel.fromJson(json.condition);
         this.fields = json.fields.map(field => {
-          const fieldModel = new FieldModel();
-          fieldModel.fromJson(field);
-          return field;
+          return FieldModel.fromJson(field);
         });
     }
 
@@ -123,11 +138,13 @@ export class ButtonModel extends BaseModel {
     type;
     condition;
 
-    fromJson(json) {
-        this.label = json.label;
-        this.value = json.value;
-        this.type = json.type;
-        this.condition = json.condition;
+    static fromJson(json) {
+        const buttonModel = new ButtonModel();
+        buttonModel.label = json.label;
+        buttonModel.value = json.value;
+        buttonModel.type = json.type;
+        buttonModel.condition = json.condition;
+        return buttonModel;
     }
 }
 
@@ -139,12 +156,14 @@ export class FormModel extends BaseModel {
     buttons = [];
     css;
 
-    fromJson(json) {
-        this.id = json.id;
-        this.title = json.title;
-        this.description = json.description;
-        this.sections = json.sections;
-        this.buttons = json.buttons;
-        this.css = json.css;
+    static fromJson(json) {
+        const formModel = new FormModel();
+        formModel.id = json.id;
+        formModel.title = json.title;
+        formModel.description = json.description;
+        formModel.sections = json.sections;
+        formModel.buttons = json.buttons;
+        formModel.css = json.css;
+        return formModel;
     }
 }

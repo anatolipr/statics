@@ -73,109 +73,31 @@ export class CondtionModel extends BaseModel {
 }
 
 export class FieldModel extends BaseModel {
-    #label;
-    #description;
-    #type;
+    label;
+    description;
+    type;
     //single
-    #placeholder;
-    #fieldName;
-    #required = false;
-    #value; 
-    #validation;
-    #condition;
+    placeholder;
+    fieldName;
+    required = false;
+    value; 
+    validation;
+    condition;
 
     //custom
-    #customElementName;
+    customElementName;
 
-    //section
-    #sectionModel;
+    section;
 }
 
-
-
 export class SectionModel extends BaseModel {
-    #id;
-    #title;
-    #description;
-    #multi = false; //section can be repeated
-    #key; //used when nested JSON is produced as the key for the nested value
-    #condition;
-    #fields = [];
-
-    get () {
-      return this.#id;
-    }
-    
-    set id(id) {
-      this.#id = id;
-      this.emit('idSet', id);
-    }
-
-    get () {
-      return this.#title;
-    }
-    
-    set title(title) {
-      this.#title = title;
-      this.emit('titleSet', title);
-    }
-
-    get () {
-      return this.#description;
-    }
-    
-    set description(description) {
-      this.#description = description;
-      this.emit('descriptionSet', description);
-    }
-
-    get () {
-      return this.#multi;
-    }
-    
-    set multi(multi) {
-      this.#multi = multi;
-      this.emit('multiSet', multi);
-    }
-
-    get () {
-      return this.#key;
-    }
-    
-    set key(key) {
-      this.#key = key;
-      this.emit('keySet', key);
-    }
-
-    get () {
-      return this.#condition;
-    }
-    
-    set condition(condition) {
-      this.#condition = condition;
-      this.emit('conditionSet', condition);
-    }
-
-    get () {
-      return this.#fields;
-    }
-    
-    set fields(fields) {
-      this.#fields = fields;
-      this.emit('fieldsSet', fields);
-    }
-
-    toJson() {
-        return {
-            id: this.id,
-            title: this.title,
-            description: this.description,
-            multi: this.multi,
-            key: this.key,
-            condition: this.condition.toJson(),
-            fields: this.fields.map(field => field.toJson())
-        }
-    }
+    id;
+    title;
+    description;
+    multi = false; //section can be repeated
+    key; //used when nested JSON is produced as the key for the nested value
+    condition;
+    fields = [];
 
     fromJson(json) {
         this.id = json.id;
@@ -196,55 +118,10 @@ export class SectionModel extends BaseModel {
 }
 
 export class ButtonModel extends BaseModel {
-    #label;
-    #value;
-    #type;
-    #condition;
-
-    get () {
-      return this.#label;
-    }
-    
-    set label(label) {
-      this.#label = label;
-      this.emit('labelSet', label);
-    }
-
-    get () {
-      return this.#value;
-    }
-    
-    set value(value) {
-      this.#value = value;
-      this.emit('valueSet', value);
-    }
-
-    get () {
-      return this.#type;
-    }
-    
-    set type(type) {
-      this.#type = type;
-      this.emit('typeSet', type);
-    }
-
-    get () {
-      return this.#condition;
-    }
-    
-    set condition(condition) {
-      this.#condition = condition;
-      this.emit('conditionSet', condition);
-    }
-
-    toJson() {
-        return {
-            label: this.label,
-            value: this.value,
-            type: this.type,
-            condition: this.condition
-        }
-    }
+    label;
+    value;
+    type;
+    condition;
 
     fromJson(json) {
         this.label = json.label;
@@ -255,77 +132,12 @@ export class ButtonModel extends BaseModel {
 }
 
 export class FormModel extends BaseModel {
-    #id;
-    #title;
-    #description;
-    #sections = [];
-    #buttons = [];
-    #css;
-
-    get id() {
-        return this.#id;
-    }
-
-    set id(id) {
-        this.#id = id;
-        this.emit('idSet', title)
-    }
-
-    get title() {
-        return this.#title;
-    }
-
-    set title(title) {
-        this.#title = title;
-        this.emit('titleSet', title);
-    }
-    
-    get () {
-      return this.#description;
-    }
-    
-    set description(description) {
-      this.#description = description;
-      this.emit('descriptionSet', description);
-    }
-
-    get () {
-      return this.#sections;
-    }
-    
-    set sections(sections) {
-      this.#sections = sections;
-      this.emit('sectionsSet', sections);
-    }
-
-    get () {
-      return this.#buttons;
-    }
-    
-    set buttons(buttons) {
-      this.#buttons = buttons;
-      this.emit('buttonsSet', buttons);
-    }
-
-    get () {
-      return this.#css;
-    }
-    
-    set css(css) {
-      this.#css = css;
-      this.emit('cssSet', css);
-    }
-
-    toJson() {
-        return {
-            id: this.id,
-            title: this.title,
-            description: this.description,
-            sections: this.sections.toJson(),
-            buttons: this.buttons.toJson(),
-            css: this.css
-        }
-    }
+    id;
+    title;
+    description;
+    sections = [];
+    buttons = [];
+    css;
 
     fromJson(json) {
         this.id = json.id;
@@ -336,4 +148,3 @@ export class FormModel extends BaseModel {
         this.css = json.css;
     }
 }
-

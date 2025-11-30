@@ -156,6 +156,26 @@ export class FormModel extends BaseModel {
     buttons = [];
     css;
 
+    addSection(section) {
+      this.sections.push(section);
+      this.emit('sectionAdded', section);
+    }
+
+    removeSection(idx) {
+      this.sections.splice(idx, 1);
+      this.emit('sectionRemoved', idx);
+    }
+
+    addButton(button) {
+      this.buttons.push(button);
+      this.emit('buttonAdded', button);
+    }
+
+    removeButton(idx) {
+      this.buttons.splice(idx, 1);
+      this.emit('buttonRemoved', idx);
+    }
+
     static fromJson(json) {
         const formModel = new FormModel();
         formModel.id = json.id;

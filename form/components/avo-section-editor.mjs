@@ -1,0 +1,1 @@
+customElements.define('avo-section-editor')

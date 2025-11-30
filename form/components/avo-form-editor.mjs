@@ -26,19 +26,25 @@ customElements.define('avo-form-editor', class extends HTMLElement {
             <avo-field-list>
 
                 <avo-field-with-label label="ID">
-                    <input type="text">
+                    <input type="text" data-id="id">
                 </avo-field-with-label>
-                <avo-field-with-label label="Name">
-                    <input type="text">
+                <avo-field-with-label label="Title">
+                    <input type="text" data-id="title">
+                </avo-field-with-label>
+                <avo-field-with-label label="Description">
+                    <input type="text" data-id="description">
+                </avo-field-with-label>
+
+                <avo-field-with-label label="Sections">
+                    TODO
+                </avo-field-with-label>
+
+                <avo-field-with-label label="CSS">
+                    <textarea data-id="css"></textarea>
                 </avo-field-with-label>
 
                 
-                <avo-field-with-label label="Condition (temp)">
-                    <avo-pair-input
-                    fields="fieldName, requiredValue"
-                    placeholders="field name, required value"
-                    ></avo-pair-input>
-                </avo-field-with-label>
+
 
             </avo-field-list>
 

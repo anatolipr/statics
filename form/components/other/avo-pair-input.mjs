@@ -1,4 +1,4 @@
-import { bindModelToInputs, split } from "../../rand/util.mjs";
+import { bindModelToInputs, split } from "../../../rand/util.mjs";
 
 customElements.define('avo-pair-input', class extends HTMLElement {
 

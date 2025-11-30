@@ -5,3 +5,7 @@ fields="fieldName, requiredValue"
 placeholders="field name, required value"
 ></avo-pair-input>
 </avo-field-with-label>`;
+
+
+const pairInput = this.shadowRoot.querySelector('avo-pair-input');
+pairInput.model = new CondtionModel(); 

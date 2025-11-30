@@ -44,9 +44,9 @@ export class BaseModel extends EventEmitter {
     }
 }
 
-export const defineElementsWithDataId = (container) => {
-    container.querySelectorAll('[data-id]').forEach(el => {
-        container[`${el.dataset.id}El`] = el;
+export const defineElementsWithDataId = (component) => {
+    (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-id]').forEach(el => {
+        component[`${el.dataset.id}El`] = el;
     });
 }
 
@@ -56,8 +56,9 @@ export function bindModelToInputs(component, model, map) {
 
     if (!map) {
         map = {};
-        container.querySelectorAll('[data-id]').forEach(el => {
-            map[el.dataset.id] = el.dataset.id;
+        
+        (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-id]').forEach(el => {
+            map[el.dataset.id] = el.dataset.id + 'El';
         });
     }
 

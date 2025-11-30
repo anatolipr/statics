@@ -1,8 +1,9 @@
-import './avo-pair-input.mjs'
-import './avo-field-with-label.mjs'
-import './avo-field-list.mjs'
+import './other/avo-pair-input.mjs'
+import './other/avo-field-with-label.mjs'
+import './other/avo-field-list.mjs'
 
-import { CondtionModel } from "../form-models.mjs";
+import { CondtionModel, FormModel } from "../form-models.mjs";
+import { bindModelToInputs } from '../../rand/util.mjs';
 
 const css = await fetch(import.meta.resolve('./avo-form-editor.css'))
 .then(r => r.text());
@@ -11,7 +12,23 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 customElements.define('avo-form-editor', class extends HTMLElement {
-    constructor() { 
+    
+    #model;
+
+    set model(model) {
+        if (this.#model) {
+            Object.assign(this.#model, model);
+        } else {
+            this.#model = model;
+            bindModelToInputs(this, this.#model);
+        }
+    }
+
+    get model() {
+        return this.#model;
+    }
+
+    constructor() {
         super();
         this.attachShadow({'mode': 'open'});
     }
@@ -43,19 +60,16 @@ customElements.define('avo-form-editor', class extends HTMLElement {
                     <textarea data-id="css"></textarea>
                 </avo-field-with-label>
 
-                
-
-
             </avo-field-list>
-
-            
             
         `;
 
         this.shadowRoot.adoptedStyleSheets = [ stylesheet ];
 
-        const pairInput = this.shadowRoot.querySelector('avo-pair-input');
-        pairInput.model = new CondtionModel(); 
+
+
+
+        this.model = new FormModel();
     }
 
 });

@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+:host {
+  font-family: sarabun, sans-serif;
+  --avo-fields-border-radius: 8px;
+}
+
 body {
   background-color: var(--_background);
   color: var(--_color);
@@ -18,12 +23,9 @@ textarea {
   font-size: inherit;
   padding: 0.4em;
   box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-}
+  border: 1px solid;
+  border-radius: var(--avo-fields-border-radius);
 
-.font-family {
-  font-family: sarabun, sans-serif;
 }
 
 .options-fields {
@@ -31,6 +33,7 @@ textarea {
   flex-direction: column
 }
 
+/* avo-pair-input */
 .first-field {
   outline: none;
   border-top-left-radius: 8px;
@@ -50,4 +53,18 @@ textarea {
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
   border: 1px solid
+}
+
+/* avo-field-with-label */
+.field-with-label {
+  gap: 10px;
+  display: flex;
+  flex-direction: column
+}
+
+/* avo-field-list */
+.field-list {
+  gap: 20px;
+  display: flex;
+  flex-direction: column
 }

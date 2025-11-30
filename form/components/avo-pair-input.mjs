@@ -11,8 +11,11 @@ customElements.define('avo-pair-input', class extends HTMLElement {
     #model;
 
     connectedCallback() {
+        if (this._initialized) return;
+        this._initialized = true;
+        
         this.innerHTML = `
-        <div style="position: relative" class="font-family options-fields">
+        <div style="position: relative" class="options-fields">
             <input
                 class="first-field"
                 type="text"

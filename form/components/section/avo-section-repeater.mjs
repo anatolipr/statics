@@ -35,6 +35,18 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
 
         this.repeatedChild = this.firstChild().cloneNode(true);
         
+        this.innerHTML = `
+        <div class="repeater"></div>
+        <button class="add">add</button>
+        `;
+
+        this.repeater = this.querySelector('.repeater');
+        this.addButton = this.querySelector('.add');
+        this.addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.addChild();
+        })
+
         this.render();
     }
 
@@ -48,7 +60,6 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
                 child.model = value;
             })
         );
-
     }
 
     removeChild(idx) {
@@ -72,9 +83,8 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
 
     //DOM
     insertAt(child, index) {
-        const referenceNode = index !== undefined ? this.children[index] : null;
-        this.insertBefore(child, referenceNode || null);
-        
+        const referenceNode = index !== undefined ? this.repeater.children[index] : null;
+        this.repeater.insertBefore(child, referenceNode || null);
     }
 
     insertValueAtIndex(index, value) {

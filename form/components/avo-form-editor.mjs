@@ -67,9 +67,15 @@ customElements.define('avo-form-editor', class extends HTMLElement {
         this.shadowRoot.adoptedStyleSheets = [ stylesheet ];
 
 
+        const existing = new FormModel();
+        existing.id = "123";
+        existing.sections = [
+            {
+                
+            }
+        ]
 
-
-        this.model = new FormModel();
+        this.model = existing;
     }
 
 });

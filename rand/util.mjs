@@ -1,6 +1,10 @@
+export const emit = (target, eventName, detail) => {
+    target.dispatchEvent(new CustomEvent(eventName, { detail }));
+}
+
 export class EventEmitter extends EventTarget {
     emit(eventName, detail) {
-        this.dispatchEvent(new CustomEvent(eventName, { detail }))
+        emit(this, eventName, detail);
     }
 }
 
@@ -79,6 +83,10 @@ export function bindModelToInputs(component, model, map) {
                 bubbles: true
             }));
         });
+        
+        if (model[prop] !== undefined) {
+            el.value = model[prop];
+        }
 
         // 2. View → Model
         el.addEventListener('input', e => {

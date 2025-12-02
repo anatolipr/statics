@@ -5,20 +5,20 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         super();
     }
 
-    #model;
+    #value;
     #emptyModel;
 
-    set model(model) {
-        if (this.#model) {
-            this.#model = [... model];
+    set value(value) {
+        if (this.#value) {
+            this.#value = [... value];
         } else {
-            this.#model = model;
+            this.#value = value;
         }
         this.render();
     }
 
-    get model() {
-        return this.#model;
+    get value() {
+        return this.#value;
     }
 
     set emptyModel(emptyModel) {
@@ -31,9 +31,10 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
 
     connectedCallback() {
         if (this._initialized) return;
-        this._initialized = true;
-
-        this.repeatedChild = this.firstChild().cloneNode(true);
+  
+        
+        this.repeatedChild = this.firstElementChild.cloneNode(true);
+        
         
         this.innerHTML = `
         <div class="repeater"></div>
@@ -48,23 +49,26 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         })
 
         this.render();
+
+        this._initialized = true;
     }
 
     render() {
         if (!this._initialized) return;
         if (!this.repeatedChild) return;
-
-        this.replaceChildren(
-            ... this.#model.map(value => {
+        
+        this.repeater.replaceChildren(
+            ... (this.#value || []).map(value => {
                 const child = this.repeatedChild.cloneNode(true);
-                child.model = value;
+                child.value = value;
+                return child;
             })
         );
     }
 
     removeChild(idx) {
-        this.#model.splice(idx, 1);
-        emit(this, 'input', this.#model);
+        this.#value.splice(idx, 1);
+        emit(this, 'input', this.#value);
     }
 
     addChild(idx) {
@@ -72,13 +76,13 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         const child = this.repeatedChild.cloneNode(true);
         //add to bottom
         if (idx === undefined) {
-            this.#model.push(newValue);
+            this.#value.push(newValue);
             insertAt(child);
         } else {
             this.insertValueAtIndex(idx, newValue);
             this.insertAt(child, idx);
         }
-        emit(this, 'input', this.#model);
+        emit(this, 'input', this.#value);
     }
 
     //DOM
@@ -88,8 +92,8 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
     }
 
     insertValueAtIndex(index, value) {
-        this.#model.splice(index, 0, value);
-        emit(this, 'input', this.#model);
+        this.#value.splice(index, 0, value);
+        emit(this, 'input', this.#value);
     }
 
     moveElementUp(element) {

@@ -66,6 +66,7 @@ export function bindModelToInputs(component, model, map) {
         });
     }
 
+
     for (const [prop, elName] of Object.entries(map)) {
         const el = component[elName];
         if (!el) continue;

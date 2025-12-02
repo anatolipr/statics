@@ -1,8 +1,9 @@
 import './other/avo-pair-input.mjs'
 import './other/avo-field-with-label.mjs'
 import './other/avo-field-list.mjs'
+import './section/avo-section-repeater.mjs'
 
-import { CondtionModel, FormModel } from "../form-models.mjs";
+import { FormModel } from "../form-models.mjs";
 import { bindModelToInputs } from '../../rand/util.mjs';
 
 const css = await fetch(import.meta.resolve('./avo-form-editor.css'))
@@ -13,19 +14,19 @@ stylesheet.replaceSync(css);
 
 customElements.define('avo-form-editor', class extends HTMLElement {
     
-    #model;
+    #value;
 
-    set model(model) {
-        if (this.#model) {
-            Object.assign(this.#model, model);
+    set value(value) {
+        if (this.#value) {
+            Object.assign(this.#value, value);
         } else {
-            this.#model = model;
-            bindModelToInputs(this, this.#model);
+            this.#value = value;
+            bindModelToInputs(this, this.#value);
         }
     }
 
-    get model() {
-        return this.#model;
+    get value() {
+        return this.#value;
     }
 
     constructor() {
@@ -53,7 +54,9 @@ customElements.define('avo-form-editor', class extends HTMLElement {
                 </avo-field-with-label>
 
                 <avo-field-with-label label="Sections">
-                    TODO
+                    <avo-section-repeater data-id="sections">
+                        <h1>section</h1>
+                    </avo-section-repeater>
                 </avo-field-with-label>
 
                 <avo-field-with-label label="CSS">
@@ -71,11 +74,18 @@ customElements.define('avo-form-editor', class extends HTMLElement {
         existing.id = "123";
         existing.sections = [
             {
-                
-            }
+                id: '123', title: 'foo'
+            },
+            {
+                id: '321', title: 'abc'
+            },
+            {
+                id: '111', title: 'bar'
+            },
         ]
 
-        this.model = existing;
+        this.value = existing;
+
     }
 
 });

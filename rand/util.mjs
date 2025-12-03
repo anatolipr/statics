@@ -21,7 +21,7 @@ function observe(obj) {
         // 1. Add 'receiver' as the 4th argument
         set(target, prop, value, receiver) {
 
-            if (target[prop] === value) {
+            if (deepEqual(target[prop],value)) {
                 // If the values are identical, do nothing (don't set, don't emit)
                 // and return true to indicate the "set" operation was successful
                 return true;
@@ -41,6 +41,33 @@ function observe(obj) {
     });
 }
 
+function deepEqual(val1, val2) {
+    // 1. Check for strict equality (covers primitives and same reference objects)
+    if (val1 === val2) return true;
+  
+    // 2. Check if either is null or not an object (since typeof null is 'object')
+    if (val1 === null || typeof val1 !== 'object' || 
+        val2 === null || typeof val2 !== 'object') {
+      return false;
+    }
+  
+    // 3. handle Keys: Get keys of both objects
+    const keys1 = Object.keys(val1);
+    const keys2 = Object.keys(val2);
+  
+    // 4. Different number of keys? Not equal.
+    if (keys1.length !== keys2.length) return false;
+  
+    // 5. Recursively check each key and value
+    for (const key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(val1[key], val2[key])) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+
 export class BaseModel extends EventEmitter {
     constructor() {
         super();
@@ -55,6 +82,9 @@ export const defineElementsWithDataId = (component) => {
 }
 
 export function bindModelToInputs(component, model, map) {
+
+    if (component._bound) return;
+    if (!component._initialized) return;
     
     defineElementsWithDataId(component);
 
@@ -91,10 +121,13 @@ export function bindModelToInputs(component, model, map) {
 
         // 2. View → Model
         el.addEventListener('input', e => {
-            model[prop] = e.target.value;
             e.stopPropagation();
+            console.log(model, prop, el)
+            model[prop] = e.target.value;
         });
     }
+
+    component._bound = true;
 }
 
 export function split(str = '', trim = true) {

@@ -6,7 +6,7 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
     }
 
     #value;
-    #emptyModel;
+    #emptyModelFn;
 
     set value(value) {
         if (this.#value) {
@@ -21,17 +21,16 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         return this.#value;
     }
 
-    set emptyModel(emptyModel) {
-        this.#emptyModel = emptyModel;
+    set emptyModelFn(emptyModelFn) {
+        this.#emptyModelFn = emptyModelFn;
     }
 
-    get emptyModel() {
-        return this.#emptyModel;
+    get emptyModelFn() {
+        return this.#emptyModelFn;
     }
 
     connectedCallback() {
         if (this._initialized) return;
-  
         
         this.repeatedChild = this.firstElementChild.cloneNode(true);
         
@@ -64,6 +63,7 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
                 return child;
             })
         );
+        
     }
 
     removeChild(idx) {
@@ -72,16 +72,18 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
     }
 
     addChild(idx) {
-        const newValue = structuredClone(this.#emptyModel);
+        const newValue = this.#emptyModelFn(this);
         const child = this.repeatedChild.cloneNode(true);
+        child.value = newValue;
         //add to bottom
         if (idx === undefined) {
             this.#value.push(newValue);
-            insertAt(child);
+            this.insertAt(child);
         } else {
             this.insertValueAtIndex(idx, newValue);
             this.insertAt(child, idx);
         }
+        
         emit(this, 'input', this.#value);
     }
 

@@ -68,6 +68,7 @@ export class CondtionModel extends BaseModel {
 
     static fromJson(json) {
         const condition = new CondtionModel();
+        if (!json) return condition;
         condition.fieldName = json.requiredValue;
         condition.requiredValue = json.requiredValue;
         return condition;
@@ -125,9 +126,10 @@ export class SectionModel extends BaseModel {
         section.multi = json.multi;
         section.key = json.key;
         section.condition = CondtionModel.fromJson(json.condition);
-        this.fields = json.fields.map(field => {
+        this.fields = json.fields?.map(field => {
           return FieldModel.fromJson(field);
         });
+        return section;
     }
 
 }

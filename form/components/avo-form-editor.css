@@ -68,3 +68,18 @@ textarea {
   display: flex;
   flex-direction: column
 }
+
+avo-section-repeater {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.repeater {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+

@@ -111,7 +111,7 @@ export function bindModelToInputs(component, model, map) {
                     target: el,
                     value: e.detail
                 },
-                bubbles: true
+                bubbles: false
             }));
         });
         
@@ -122,8 +122,11 @@ export function bindModelToInputs(component, model, map) {
         // 2. View → Model
         el.addEventListener('input', e => {
             e.stopPropagation();
-            console.log(model, prop, el)
-            model[prop] = e.target.value;
+            model[prop] = e.target ? e.target.value : e.detail.target.value;
+            //notify anyone interested in persisting data
+            component.dispatchEvent(new CustomEvent('inputHandled', {
+                bubbles: true, composed: true
+            }));
         });
     }
 

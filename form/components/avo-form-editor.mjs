@@ -86,12 +86,14 @@ customElements.define('avo-form-editor', class extends HTMLElement {
         ]
 
         this.value = existing;
-
+        //this.shadowRoot.querySelector('[data-id="sections"]').value = existing.sections;
         this.shadowRoot.querySelector('[data-id="sections"]').emptyModelFn = function () {
             return SectionModel.fromJson({
                 id: 'xxx', title: 'xxx'
             })
         }
+
+        this.shadowRoot.addEventListener('inputHandled', e => console.log)
 
     }
 

@@ -49,6 +49,7 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
 
         this.render();
 
+
         this._initialized = true;
     }
 

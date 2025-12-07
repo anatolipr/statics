@@ -76,8 +76,8 @@ export class BaseModel extends EventEmitter {
 }
 
 export const defineElementsWithDataId = (component) => {
-    (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-id]').forEach(el => {
-        component[`${el.dataset.id}El`] = el;
+    (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-bind]').forEach(el => {
+        component[`${el.dataset.bind}El`] = el;
     });
 }
 
@@ -91,8 +91,8 @@ export function bindModelToInputs(component, model, map) {
     if (!map) {
         map = {};
         
-        (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-id]').forEach(el => {
-            map[el.dataset.id] = el.dataset.id + 'El';
+        (component.shadowRoot ? component.shadowRoot : component).querySelectorAll('[data-bind]').forEach(el => {
+            map[el.dataset.bind] = el.dataset.bind + 'El';
         });
     }
 
@@ -111,7 +111,7 @@ export function bindModelToInputs(component, model, map) {
                     target: el,
                     value: e.detail
                 },
-                bubbles: false
+                bubbles: false, cancelable: true
             }));
         });
         

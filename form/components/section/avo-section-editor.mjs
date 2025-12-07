@@ -27,7 +27,7 @@ customElements.define('avo-section-editor', class extends HTMLElement {
 
         this.innerHTML = `
         <avo-field-with-label label="ID">
-        <input data-id="id">
+        <input data-bind="id">
         </avo-field-with-label>
         `;
         bindModelToInputs(this, this.#value);

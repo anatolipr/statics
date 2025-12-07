@@ -29,6 +29,23 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         return this.#emptyModelFn;
     }
 
+    getWrapped(what) {
+        if (! this.wrap) {
+            this.wrap = document.createElement('div');
+            this.wrap.innerHTML = `
+            <span> remove </span>
+            <div class="holder">
+            </div>
+            `;
+        }
+
+        const clone = this.wrap.cloneNode(true);
+
+        const childHolder = clone.querySelector('.holder');
+        childHolder.appendChild(what);
+        return clone;
+    }
+
     connectedCallback() {
         if (this._initialized) return;
         
@@ -39,6 +56,8 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         <div class="repeater"></div>
         <button class="add">add</button>
         `;
+
+        
 
         this.repeater = this.querySelector('.repeater');
         this.addButton = this.querySelector('.add');
@@ -61,7 +80,7 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
             ... (this.#value || []).map(value => {
                 const child = this.repeatedChild.cloneNode(true);
                 child.value = value;
-                return child;
+                return this.getWrapped(child);
             })
         );
         
@@ -76,13 +95,15 @@ customElements.define('avo-section-repeater', class extends HTMLElement {
         const newValue = this.#emptyModelFn(this);
         const child = this.repeatedChild.cloneNode(true);
         child.value = newValue;
+
+        const wrapped = this.getWrapped(child);
         //add to bottom
         if (idx === undefined) {
             this.#value.push(newValue);
-            this.insertAt(child);
+            this.insertAt(wrapped);
         } else {
             this.insertValueAtIndex(idx, newValue);
-            this.insertAt(child, idx);
+            this.insertAt(wrapped, idx);
         }
         
         emit(this, 'input', this.#value);

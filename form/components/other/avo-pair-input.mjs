@@ -19,12 +19,12 @@ customElements.define('avo-pair-input', class extends HTMLElement {
             <input
                 class="first-field"
                 type="text"
-                data-id="key"
+                data-bind="key"
                 placeholder="${this.placeholders[0] || ''}" />
             <input
                 class="second-field"
                 type="text"
-                data-id="value"
+                data-bind="value"
                 placeholder="${this.placeholders[1] || ''}" />
         </div>
         `;

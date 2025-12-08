@@ -119,6 +119,7 @@ export class SectionModel extends BaseModel {
     fields = [];
 
     static fromJson(json) {
+        if (!json) return;
         const section = new SectionModel(); 
         section.id = json.id;
         section.title = json.title;
@@ -150,24 +151,38 @@ export class ButtonModel extends BaseModel {
     }
 }
 
+
+export class SectionsModel extends BaseModel {
+    list = [];
+    
+    add() {
+        const section = new SectionModel();
+        this.list.push(section);
+        this.emit('added', section);
+    }
+
+    remove(idx) {
+      this.list.splice(idx, 1);
+      this.emit('removed', idx);
+    }
+
+    static fromJson(json) {
+        const model = new SectionsModel();
+        model.list = json.map(value => SectionModel.fromJson(value));
+        return model;
+    }
+    
+}
+
 export class FormModel extends BaseModel {
     id;
     title;
     description;
-    sections = [];
+    sections = new SectionsModel();
     buttons = [];
     css;
 
-    addSection(section) {
-      this.sections.push(section);
-      this.emit('sectionAdded', section);
-    }
-
-    removeSection(idx) {
-      this.sections.splice(idx, 1);
-      this.emit('sectionRemoved', idx);
-    }
-
+    
     addButton(button) {
       this.buttons.push(button);
       this.emit('buttonAdded', button);
@@ -183,7 +198,7 @@ export class FormModel extends BaseModel {
         formModel.id = json.id;
         formModel.title = json.title;
         formModel.description = json.description;
-        formModel.sections = json.sections;
+        formModel.sections = SectionsModel.fromJson(json.sections);
         formModel.buttons = json.buttons;
         formModel.css = json.css;
         return formModel;

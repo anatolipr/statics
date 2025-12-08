@@ -83,8 +83,10 @@ export const defineElementsWithDataId = (component) => {
 
 export function bindModelToInputs(component, model, map) {
 
+    if (! model) return;
     if (component._bound) return;
     if (!component._initialized) return;
+    
     
     defineElementsWithDataId(component);
 

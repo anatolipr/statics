@@ -1,10 +1,9 @@
 import './other/avo-pair-input.mjs'
 import './other/avo-field-with-label.mjs'
 import './other/avo-field-list.mjs'
-import './section/avo-section-editor.mjs'
-import './section/avo-section-repeater.mjs'
+import './section/avo-sections-list.mjs'
 
-import { FormModel, SectionModel } from "../form-models.mjs";
+import { FormModel, SectionModel, SectionsModel } from "../form-models.mjs";
 import { bindModelToInputs } from '../../rand/util.mjs';
 
 const css = await fetch(import.meta.resolve('./avo-form-editor.css'))
@@ -55,9 +54,7 @@ customElements.define('avo-form-editor', class extends HTMLElement {
                 </avo-field-with-label>
 
                 <avo-field-with-label label="Sections">
-                    <avo-section-repeater data-bind="sections">
-                        <avo-section-editor></avo-section-editor>
-                    </avo-section-repeater>
+                    <avo-sections-list data-bind="sections"></avo-sections-list>
                 </avo-field-with-label>
 
                 <avo-field-with-label label="CSS">
@@ -73,17 +70,19 @@ customElements.define('avo-form-editor', class extends HTMLElement {
 
         const existing = new FormModel();
         existing.id = "123";
-        existing.sections = [
-            SectionModel.fromJson({
+        existing.sections = SectionsModel.fromJson([
+            {
                 id: '123', title: 'foo'
-            }),
-            SectionModel.fromJson({
+            },
+            {
                 id: '321', title: 'abc'
-            }),
-            SectionModel.fromJson({
+            },
+            {
                 id: '111', title: 'bar'
-            }),
-        ]
+            },
+        ]);
+
+        
 
         this.value = existing;
         //this.shadowRoot.querySelector('[data-bind="sections"]').value = existing.sections;
